@@ -6,9 +6,11 @@
 //
 //void print(int A[][120], int N, int M)
 //{
-//    for (int R = 0; R < N; R++)
-//        for (int C = 0; C < M; C++)
-//            std::cout << A[R][C];
+//	for (int R = 0; R < N; R++) {
+//		for (int C = 0; C < M; C++)
+//			std::cout << A[R][C];
+//		std::cout << std::endl;
+//	}
 //}
 //
 //
@@ -88,21 +90,6 @@
 //    return 1;
 //}
 
-
-
-
-
-
-
-
-// void print(int A[][80], int N, int M) // print array on screen
-//{
-//	for (int R = 0; R < N; R++) {
-//		for (int C = 0; C < M; C++)
-//			std::cout << A[R][C];
-//		std::cout << std::endl;
-//	}
-//}
 
 
 
