@@ -29,7 +29,7 @@ void draw(int X, int Y) //draw symbol on (X,Y) position
 	gotoxy(X, Y); // move cursor
 	putchar('X'); // put the char
 	A[Y][X] = 1; // filling element in array
-	Sleep(1); // 100 milliseconds pause
+	Sleep(10); // 10 milliseconds pause
 }
 
 int main()
