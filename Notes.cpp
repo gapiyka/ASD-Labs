@@ -120,6 +120,7 @@
 		T = B[i];
 		L = 1;
 		R = i;
+
 		while (L < R)
 		{
 			j = (L + R) / 2;
@@ -131,6 +132,7 @@
 			{
 				R = j;
 			}
+
 			for (int k = i - 1; k > R; --k)
 			{
 				B[k + 1] = B[k];
@@ -143,17 +145,22 @@
 	{
 		printf_s("%d", B[i]);
 	}
+
 	printf_s("\nHello");
+
+
 	int average_index = 0,
 		first_index = 0,
 		last_index = n - 1,
 	search_value = 4;
 	if (last_index == -1) cout << "\narray is empty" << endl;
+
 	while (first_index < last_index)
 	{
 		average_index = first_index + (last_index - first_index) / 2;
 		search_value <= B[average_index] ? last_index = average_index : first_index = average_index + 1;
 	}
+
 	if (B[last_index] == search_value)
 		cout << "\nvalue is found" << "\nindex = " << last_index << endl;
 	else
@@ -173,6 +180,7 @@
 				else
 					high = mid;
 			}
+
 			return low;
 		}
 		*/
@@ -180,43 +188,43 @@
 
 
 
-		// LAB 2-2
+// LAB 2-2
 
-		//void insertionSort(int arr[], int length)
-		//{
-		//	int temp, item;
-		//	for (int counter = 1; counter < length; counter++)
-		//	{
-		//		temp = arr[counter];
-		//		item = counter - 1;
-		//		while (item >= 0 && arr[item] < temp)
-		//		{
-		//			arr[item + 1] = arr[item];
-		//			arr[item] = temp;
-		//			item--;
-		//		}
-		//	}
-		//}
+//void insertionSort(int arr[], int length)
+//{
+//	int temp, item;
+//	for (int counter = 1; counter < length; counter++)
+//	{
+//		temp = arr[counter];
+//		item = counter - 1;
+//		while (item >= 0 && arr[item] < temp)
+//		{
+//			arr[item + 1] = arr[item];
+//			arr[item] = temp;
+//			item--;
+//		}
+//	}
+//}
 
-		//void sort_array(int A[], int n)
-		//{
-		//	int x, low, high, mid;
-		//	for (short i = 1; i < n; i++)
-		//	{
-		//		if (A[i] < A[i - 1]) {
-		//			x = A[i];
-		//			low = 0;
-		//			high = i - 1;
-		//			do {
-		//				mid = (low + high) / 2;
-		//				if (A[mid] < x)
-		//					low = mid + 1;
-		//				else
-		//					high = mid - 1;
-		//			} while (low <= high);
-		//			for (short j = i - 1; j >= low; j--)
-		//				A[j + 1] = A[j];
-		//			A[low] = x;
-		//		}
-		//	}
-		//}
+//void sort_array(int A[], int n)
+//{
+//	int x, low, high, mid;
+//	for (short i = 1; i < n; i++)
+//	{
+//		if (A[i] < A[i - 1]) {
+//			x = A[i];
+//			low = 0;
+//			high = i - 1;
+//			do {
+//				mid = (low + high) / 2;
+//				if (A[mid] < x)
+//					low = mid + 1;
+//				else
+//					high = mid - 1;
+//			} while (low <= high);
+//			for (short j = i - 1; j >= low; j--)
+//				A[j + 1] = A[j];
+//			A[low] = x;
+//		}
+//	}
+//}
