@@ -7,7 +7,7 @@ int yStart = 11; // index of middle line
 int xStart = 67; // index of start column pos = 80 - 12; index = pos - 1
 int length = 57; // 80 - 12 -12
 
- void print(int A[][80], int N, int M) // print array on screen
+void print(int A[][80], int N, int M) // print array on screen
 {
 	for (int R = 0; R < N; R++) {
 		for (int C = 0; C < M; C++)
@@ -29,7 +29,7 @@ void draw(int X, int Y) //draw symbol on (X,Y) position
 	gotoxy(X, Y); // move cursor
 	putchar('X'); // put the char
 	A[Y][X] = 1; // filling element in array
-	Sleep(1); // 100 milliseconds pause
+	Sleep(10); // 10 milliseconds pause
 }
 
 int main()
@@ -38,14 +38,14 @@ int main()
 	int xPos = xStart;
 	int yPos = yStart;
 
-// TEST SIDE
+	// TEST SIDE
 	print(A, 24, 80);
 	printf_s("Here is an empty multidimensional array 24x80");
 	Sleep(5000);
 	system("cls");
-// END
+	// END
 
-// MAIN BODY
+	// MAIN BODY
 	for (int times = 0; times < 24; times++)
 	{
 		if (IsLeft) // left+down move
@@ -82,13 +82,13 @@ int main()
 			IsLeft = true;
 		}
 	}
-// END
+	// END
 
-// FINAL TEST
+	// FINAL TEST
 	gotoxy(0, 25);
 	print(A, 24, 80);
 	printf_s("Here is a filled multidimensional array");
-// END
-	
+	// END
+
 	return 1;
 }
