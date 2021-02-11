@@ -1,45 +1,46 @@
 #include <stdio.h>
-#include <iostream>
 
 const int n = 10;
-int A[n][n] = { { 6, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 5, 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 4, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 3, 0, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 2, 0, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 2, 0, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 2, 0, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 } };
+int A[n][n] = { { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 2, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 2, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 2, 0, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 2, 0, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 2, 0, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 2, 0, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 2, 0, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 },
+				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 } };
 
-int BiSearch(int answer)
+void BiSearch(int answer)
 {
 	int low = 0;
 	int high = n - 1;
-	while (low <= high)
+	int coords;
+	while (low < high)
 	{
 		int mid = (high + low) / 2;
+		coords = mid;
 		if (answer == A[mid][mid])
 		{
-			printf_s("This number located at index:( %d , %d )", mid, mid);
-			return 1;
+			printf_s("This number located at index:( %d , %d )\n", mid, mid);
+			high = mid;
 		}
 		else if (answer < A[mid][mid])
 			low = mid + 1;
 		else if (answer > A[mid][mid])
 			high = mid - 1;
-		else
-			return 0;
 	}
+	if (answer != A[coords][coords])
+		printf_s("This number doesnt exist in matrix");
 }
 
 void print(int A[][10], int N, int M)
 {
 	for (int R = 0; R < N; R++) {
 		for (int C = 0; C < M; C++)
-			std::cout << A[R][C];
-		std::cout << std::endl;
+			printf_s("%d", A[R][C]);
+		printf_s("\n");
 	}
 }
 
@@ -56,6 +57,7 @@ int main()
 	}
 	else
 	{
-		return BiSearch(answer);
+		BiSearch(answer);
+		return 1;
 	}
 }
