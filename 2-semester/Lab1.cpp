@@ -4,13 +4,14 @@
 
 
 //TASK 1
-void RecurseSum(int length, float* prevF, float* sum, int i) {
+float RecurseSum(int length, float prevF, float sum, int i) {
+	i++;
+	sum += prevF;
+	prevF = -prevF * x * (3 * i - 5) / (3 * i - 3);
 	if (length + 1 != i) {
-		i++;
-		*sum += *prevF;
-		*prevF = -(*prevF) * x * (3 * i - 5) / (3 * i - 3);
-		RecurseSum(length, prevF, sum, i);
+		sum = RecurseSum(length, prevF, sum, i);
 	}
+	return sum;
 }
 int main()
 {
@@ -19,7 +20,7 @@ int main()
 	float sum = 0;
 	printf_s("Please, input your integer number\n");
 	scanf_s("%d", &input);
-	RecurseSum(input, &F, &sum, 1);
+	sum = RecurseSum(input, F, sum, 1);
 	printf_s("Sum of range equal: ( %f )\n", sum);
 }
 
@@ -48,15 +49,15 @@ int main()
 
 
 //TASK 3
-float RecurseSum(int length, float prevF, float* sum, int i) {
+float RecurseSum(int length, float prevF, float sum, int i) {
 	float tempF = prevF;
 	if (length > i) {
 		i++;
 		prevF = -(prevF)* x * (3 * i - 5) / (3 * i - 3);
-		prevF =  RecurseSum(length, prevF, sum, i);
+		sum =  RecurseSum(length, prevF, sum, i);
 	}
-	*sum += tempF;
-	return prevF;
+	sum += tempF;
+	return sum;
 }
 int main()
 {
@@ -65,7 +66,7 @@ int main()
 	float sum = 0;
 	printf_s("Please, input your integer number\n");
 	scanf_s("%d", &input);
-	F = RecurseSum(input, F, &sum, 1);
+	sum = RecurseSum(input, F, sum, 1);
 	printf_s("Sum of range equal: ( %f )\n", sum);
 }
 
