@@ -26,24 +26,24 @@ int main()
 
 
 //TASK 2
-float RecurseSum(float prevF, float* sum, int* i) {
-	if (*i > 1) {
-		*i -= 1;
-		prevF = RecurseSum(prevF, sum, i);
+float RecurseSum(float prevF, float* sum, int i) {
+	if (i > 1) {
+		prevF = RecurseSum(prevF, sum, i - 1);
+		prevF = -(prevF)*x * (3 * i - 5) / (3 * i - 3);
+		*sum += prevF;
 	}
-	*i += 1;
-	*sum += prevF;
-	prevF = -prevF * x * (3 * (*i) - 5) / (3 * (*i) - 3);
+	else *sum = prevF;
+
 	return prevF;
 }
 int main()
 {
 	float F = 1;
-	int i;
+	int i = 1;
 	float sum = 0;
 	printf_s("Please, input your integer number\n");
 	scanf_s("%d", &i);
-	F = RecurseSum(F, &sum, &i);
+	F = RecurseSum(F, &sum, i);
 	printf_s("Sum of range equal: ( %f )\n", sum);
 }
 
