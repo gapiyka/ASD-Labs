@@ -3,94 +3,94 @@
 #include <stdio.h>
 #include <malloc.h>
 
+
 struct list
 {
-    char info; //char key
-    struct list* pointer; //pointer on next list element(NULL by default)
+    int size, head, end;
+    char* array;
 };
 
-struct list* init(char initChar) //initChar- initial key value
+struct list* init(int size)
 {
-    struct list* lst;
-    //give memory for list element
-    lst = (struct list*)malloc(sizeof(struct list));
-    lst->info = initChar;
-    lst->pointer = NULL;
-    return(lst);
+    struct list* queue = (struct list*)malloc(sizeof(struct list));
+    queue->head = 0;
+    queue->size = size;
+    queue->end = size - 1;
+    queue->array = (char*)malloc(queue->size * sizeof(char));
+    return queue;
 }
 
-struct list* list_add(list* lst, char newChar)
+char head(struct list* queue)
 {
-    struct list* temp, * p;
-    temp = (struct list*)malloc(sizeof(list));
-    p = lst->pointer; //save pointer for next node
-    lst->pointer = temp; //ex-node sends for current
-    temp->info = newChar; //save char info for current
-    temp->pointer = p; //next pointer
-    return(temp);
+    return queue->array[queue->head];
 }
 
-struct list* deletehead(list* root)
+char end(struct list* queue)
 {
-    struct list* temp;
-    temp = root->pointer;
-    free(root); //free memory
-    return(temp); //new node
+    return queue->array[queue->end];
 }
 
-void print(list* lst)
+void list_add(struct list* queue, char key)
 {
-    struct list* p;
-    p = lst;
-    do {
-        printf("%c ", p->info); //print current char
-        p = p->pointer; //move to next pointer
-    } while (p != NULL);
+    if (key == NULL) return;
+    queue->end = (queue->end + 1)% queue->size;
+    queue->array[queue->end] = key;
+    printf("%c added to queue\n", key);
 }
 
-struct list* FreeMemory(list* lst)
+char remove_head(struct list* queue)
 {
-    struct list* node;
-   
-     node = deletehead(lst);
-     if (node != NULL) node = FreeMemory(node);
-
-     return node;
+    char key = head(queue);
+    queue->head = (queue->head + 1) % queue->size;
+    return key;
 }
 
-struct list* ReorderForNewList(list* lst) {
-    struct list* p;
-    p = lst;
-    struct list* newList = init((char)"");
-    do {
-        list_add(newList, p->info);
-        p = p->pointer;
-    } while (p != NULL);
-    newList = deletehead(newList);//remove head root- with unexpected symbol
-    return newList;
+void inverse_list(struct list* queue, struct list* newQueue)
+{
+    printf("\nINVERSE:\n");
+    int counter = N - 1;
+    char key;
+    newQueue->head = newQueue->end;
+    newQueue->end = newQueue->end - 1;
+    while (head(newQueue) != end(queue)) {
+        key = queue->array[queue->head];
+        newQueue->head = (newQueue->head - 1);
+        newQueue->array[newQueue->head] = key;
+        printf("%c drag to new queue\n", key);
+        remove_head(queue);
+        counter--;
+    }
+    printf("\nTEST:\n");
+    printf("First key in newQueue is %c\n", head(newQueue));
+    printf("Last key in newQueue is %c\n\n", end(newQueue));
+    free(queue);
 }
 
-int main() {
-    struct list* MyList = init((char)"");
-    struct list* SecondList;
+int main()
+{
+    struct list* queue = init(N);
+
     char word[N];
     int counter = 0;
-    printf("Please, input some word of %d characters:\n", N-1);
+    printf("Please, input some word of %d(or less) characters:\n", N-1);
     scanf("%s", &word);
-
-
+    
+    
     while (word[counter] != word[N-1]) {
-        list_add(MyList, word[counter]);
+        list_add(queue, word[counter]);
         counter++;
     }
-    MyList = deletehead(MyList);//remove head root- with unexpected symbol
-    printf("\nWas:");
-    print(MyList);
-    SecondList = ReorderForNewList(MyList);
-    printf("\nBecome:");
-    print(SecondList);
-    MyList = FreeMemory(MyList);
-    //printf("%c", MyList->info);// if uncomment this line - it`s throw exception, because list is free now
+    printf("\nTEST:\n");
+    printf("First key in queue1 is %c\n", head(queue));
+    printf("Last key in queue1 is %c\n\n", end(queue));
 
-    return 1;
+    struct list* queue2 = init(N);
+    inverse_list(queue, queue2);
+    //printf("Last key in newQueue is %c\n\n", end(queue));//if uncomment this line - it`s throw exception, because list is free now
+
+    //You can inverse queues again, uncomment 2 lines below
+    //queue = init(N);
+    //inverse_list(queue2, queue);
+
+    return 0;
 }
