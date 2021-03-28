@@ -46,7 +46,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
         WS_OVERLAPPEDWINDOW,
         100,
         100,
-        800,
+        1200,
         600,
         (HWND)NULL,
         (HMENU)NULL,
@@ -62,13 +62,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     return(lpMsg.wParam);
 }
 
-void arrow(float fi, int px, int py, HDC hdc) {
-    fi = 3.1416 * (180.0 - fi) / 180.0;
-    int lx, ly, rx, ry;
-    lx = px + 15 * cos(fi + 0.3);
-    rx = px + 15 * cos(fi - 0.3);
-    ly = py + 15 * sin(fi + 0.3);
-    ry = py + 15 * sin(fi - 0.3);
+void arrow(int px, int py, int dx, int dy, HDC hdc) {
+    int lx, ly=py, rx=px, ry;
+    if (dx == 0) return;
+    else lx = px + (dx / abs(dx)) * 15;
+    if (dy == 0) {
+        ly = py - 15;
+        ry = py + 15;
+        lx = px + (15 * dx / abs(dx));
+        rx = lx;
+    }
+    else ry = py + (dy / abs(dy)) * 15;
     MoveToEx(hdc, lx, ly, NULL);
     LineTo(hdc, px, py);
     LineTo(hdc, rx, ry);
@@ -83,8 +87,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
         char* ellipseName[10] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-        int xPos[10] = { 100,300,500,700,200,400,600,300,500,400 };
-        int yPos[10] = { 50,50,50,50,200,200,200,350,350,500 };
+        int xPos[10] = { 100,400,700,1000,250,850,400,700,475,625 };
+        int yPos[10] = { 50,50,50,50,200,200,350,350,500,500 };
         int dtx = 5, radius = 16, dx, dy, xDif, yDif;
         float koef;
         HPEN BluePen = CreatePen(PS_SOLID, 2, RGB(50, 0, 255));
@@ -95,30 +99,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
         for (int start = 0; start < N;start++) {
             for (int end = 0; end < N;end++) {
                 if (A[start][end] == 1) {
-                    MoveToEx(hdc, xPos[start], yPos[start], NULL);
-                    dx = 16, dy = 16;
-                    xDif = xPos[start] - xPos[end];
-                    yDif = yPos[start] - yPos[end];
-                    koef = sqrt(xDif * xDif + yDif * yDif) / radius;
-                    if (yDif == 0 && abs(xDif) > 200) {
-                        LineTo(hdc, xPos[end] + xDif/2, yPos[end] - 35);
-                        MoveToEx(hdc, xPos[end] + xDif / 2, yPos[end] -35, NULL);
+                    if (start == end) {
+                        MoveToEx(hdc, xPos[end], yPos[end], NULL);
+                        LineTo(hdc, xPos[end] + 40, yPos[end] + 10);
+                        LineTo(hdc, xPos[end] + 40, yPos[end] + 40);
+                        LineTo(hdc, xPos[end] + 10, yPos[end] + 40);
+                        LineTo(hdc, xPos[end], yPos[end]);
+                        arrow(xPos[end] + 2, yPos[end] + 13, 2, 13, hdc);
                     }
-                    else if ((abs(xDif) == 200 && abs(yDif) == 300) || (abs(xDif) == 300 && abs(yDif) == 450)) {
-                        LineTo(hdc, xPos[end] + xDif / 3, yPos[end] + yDif / 2);
-                        MoveToEx(hdc, xPos[end] + xDif / 3, yPos[end] + yDif / 2, NULL);
+                    else {
+                        MoveToEx(hdc, xPos[start], yPos[start], NULL);
+                        xDif = xPos[start] - xPos[end];
+                        yDif = yPos[start] - yPos[end];
+                        koef = sqrt(xDif * xDif + yDif * yDif) / radius;
+                        dx = xDif / koef;
+                        dy = yDif / koef;
+                        if (yDif == 0 && abs(xDif) > 300 && end <= 3) {
+                            LineTo(hdc, xPos[end] + xDif / 2, yPos[end] - 35);
+                            dx = xDif / 2 / koef;
+                            dy = (yDif-35) / koef;
+                        }
+                        else if (abs(xDif) == 300 && abs(yDif) == 300 && (end == 0 || end == 3)) {
+                            LineTo(hdc, xPos[end] + xDif / 2, yPos[end] + yDif / 1);
+                            dx = xDif / 2 / koef;
+                            dy = yDif / koef;
+                        }
+                        LineTo(hdc, xPos[end], yPos[end]);
+                        arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
                     }
-                    LineTo(hdc, xPos[end], yPos[end]);
-                    dx = xDif / koef;
-                    dy = yDif / koef;
-                    //arrow(atan(xDif/yDif), xPos[end] + dx, yPos[end] + dy, hdc);
                 }
             }
         }
         SelectObject(hdc, BluePen);
         for (int i = 0;i < N;i++) {
             Ellipse(hdc, xPos[i] - radius, yPos[i] - radius, xPos[i] + radius, yPos[i] + radius);
-            TextOut(hdc, xPos[i] - dtx, yPos[i] - dy / 2, ellipseName[i], 1);
+            TextOut(hdc, xPos[i] - dtx, yPos[i] - 8, ellipseName[i], 1);
         }
         EndPaint(hWnd, &ps);
         break;
