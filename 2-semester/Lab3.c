@@ -89,7 +89,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
         char* ellipseName[10] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
         int xPos[10] = { 100,400,700,1000,250,850,400,700,475,625 };
         int yPos[10] = { 50,50,50,50,200,200,350,350,500,500 };
-        int dtx = 5, radius = 16, dx, dy, xDif, yDif;
+        int dtx = 5, radius = 16, divine = 1, dx, dy, xDif, yDif;
         float koef;
         HPEN BluePen = CreatePen(PS_SOLID, 2, RGB(50, 0, 255));
         HPEN BlackPen = CreatePen(PS_SOLID, 1, RGB(20, 20, 5));
@@ -99,6 +99,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
         for (int start = 0; start < N;start++) {
             for (int end = 0; end < N;end++) {
                 if (A[start][end] == 1) {
+                    xDif = xPos[start] - xPos[end];
+                    yDif = yPos[start] - yPos[end];
+                    koef = sqrt(xDif * xDif + yDif * yDif) / radius;
+                    dx = xDif / koef;
+                    dy = yDif / koef;
                     if (start == end) {
                         MoveToEx(hdc, xPos[end], yPos[end], NULL);
                         LineTo(hdc, xPos[end] + 40, yPos[end] + 10);
@@ -107,13 +112,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
                         LineTo(hdc, xPos[end], yPos[end]);
                         arrow(xPos[end] + 2, yPos[end] + 13, 2, 13, hdc);
                     }
+                    else if (A[start][end] == 1 && A[end][start] == 1) {
+                        MoveToEx(hdc, xPos[start], yPos[start], NULL);
+                        LineTo(hdc, xPos[end] + xDif / 2 + (20*divine), yPos[end] + yDif/2 + (20 * divine));
+                        LineTo(hdc, xPos[end], yPos[end]);
+                        arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
+                        divine = -divine;
+                    }
                     else {
                         MoveToEx(hdc, xPos[start], yPos[start], NULL);
-                        xDif = xPos[start] - xPos[end];
-                        yDif = yPos[start] - yPos[end];
-                        koef = sqrt(xDif * xDif + yDif * yDif) / radius;
-                        dx = xDif / koef;
-                        dy = yDif / koef;
                         if (yDif == 0 && abs(xDif) > 300 && end <= 3) {
                             LineTo(hdc, xPos[end] + xDif / 2, yPos[end] - 35);
                             dx = xDif / 2 / koef;
