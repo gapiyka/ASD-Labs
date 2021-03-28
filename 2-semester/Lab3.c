@@ -20,7 +20,6 @@ int A[N][N] = {
         {0, 1, 0, 1, 0, 0, 0, 1, 1, 0}
 };
 
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
     HWND hWnd;
@@ -87,15 +86,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
         char* ellipseName[10] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-        int xPos[10] = { 100,400,700,1000,250,850,400,700,475,625 };
-        int yPos[10] = { 50,50,50,50,200,200,350,350,500,500 };
-        int dtx = 5, radius = 16, divine = 1, dx, dy, xDif, yDif;
+        int xPos[10];
+        int yPos[10];
+        int dtx = 5, radius = 16, startX = 100, divine = 1, divine2 = -1, dx, dy, xDif, yDif;
         float koef;
+        int OrientGraph = 0;// 1 - Oriented Graph | 0- Not oriented
         HPEN BluePen = CreatePen(PS_SOLID, 2, RGB(50, 0, 255));
         HPEN BlackPen = CreatePen(PS_SOLID, 1, RGB(20, 20, 5));
 
         SelectObject(hdc, BlackPen);
+        //vertex coords
+        for (int vertex = 0; vertex < N; vertex++) {
 
+            if(vertex < 4){
+                xPos[vertex] = startX + vertex * 300;
+                yPos[vertex] = 50;
+            }
+            else if (vertex < 6) {
+                startX = 550;
+                xPos[vertex] = startX + divine2 * 300;
+                yPos[vertex] = 200;
+                divine2 = -divine2;
+            }
+            else if (vertex < 8) {
+                xPos[vertex] = startX + divine2 * 150;
+                yPos[vertex] = 350;
+                divine2 = -divine2;
+            }
+            else{
+                xPos[vertex] = startX + divine2 * 75;
+                yPos[vertex] = 500;
+                divine2 = -divine2;
+            }
+        }
+        //draw graph
         for (int start = 0; start < N;start++) {
             for (int end = 0; end < N;end++) {
                 if (A[start][end] == 1) {
@@ -110,13 +134,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
                         LineTo(hdc, xPos[end] + 40, yPos[end] + 40);
                         LineTo(hdc, xPos[end] + 10, yPos[end] + 40);
                         LineTo(hdc, xPos[end], yPos[end]);
-                        arrow(xPos[end] + 2, yPos[end] + 13, 2, 13, hdc);
+                        if(OrientGraph)arrow(xPos[end] + 2, yPos[end] + 13, 2, 13, hdc);
                     }
                     else if (A[start][end] == 1 && A[end][start] == 1) {
                         MoveToEx(hdc, xPos[start], yPos[start], NULL);
                         LineTo(hdc, xPos[end] + xDif / 2 + (20*divine), yPos[end] + yDif/2 + (20 * divine));
                         LineTo(hdc, xPos[end], yPos[end]);
-                        arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
+                        if (OrientGraph)arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
                         divine = -divine;
                     }
                     else {
@@ -132,7 +156,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
                             dy = yDif / koef;
                         }
                         LineTo(hdc, xPos[end], yPos[end]);
-                        arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
+                        if (OrientGraph)arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
                     }
                 }
             }
