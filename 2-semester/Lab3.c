@@ -7,18 +7,6 @@
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 wchar_t  ProgName[] = L"Лабораторна робота 3";
-int A[N][N] = {
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 0, 1, 0, 0, 1, 0, 1, 0, 0},
-        {0, 0, 0, 0, 1, 0, 0, 1, 0, 0},
-        {1, 0, 1, 1, 1, 0, 0, 0, 0, 0},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {0, 0, 1, 1, 1, 0, 1, 0, 0, 1},
-        {1, 0, 1, 0, 0, 1, 0, 1, 0, 1},
-        {0, 0, 1, 1, 0, 0, 0, 0, 0, 0},
-        {1, 1, 0, 0, 0, 1, 0, 1, 1, 0},
-        {0, 1, 0, 1, 0, 0, 0, 1, 1, 0}
-};
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
@@ -63,7 +51,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 void arrow(int px, int py, int dx, int dy, HDC hdc) {
     int lx, ly=py, rx=px, ry;
-    if (dx == 0) return;
+    if (dx == 0 && dy == 0) return;
+    if (dx == 0) {
+        ly = py + (15 * dy / abs(dy));
+        ry = ly;
+        lx = px - 15;
+        rx = px + 15;
+    }
     else lx = px + (dx / abs(dx)) * 15;
     if (dy == 0) {
         ly = py - 15;
@@ -77,8 +71,34 @@ void arrow(int px, int py, int dx, int dy, HDC hdc) {
     LineTo(hdc, rx, ry);
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
-{
+//MATRIX SIMETRICAL
+void simMatrix(int A[N][N], int* B[N][N]) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if (A[i][j] == 1) {
+                B[j][i] = 1;
+                B[i][j] = 1;
+            }
+        }
+    }
+}
+
+int A[N][N] = {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 1, 0, 0, 1, 0, 1, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 1, 0, 0},
+        {1, 0, 1, 1, 1, 0, 0, 0, 0, 0},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {0, 0, 1, 1, 1, 0, 1, 0, 0, 1},
+        {1, 0, 1, 0, 0, 1, 0, 1, 0, 1},
+        {0, 0, 1, 1, 0, 0, 0, 0, 0, 0},
+        {1, 1, 0, 0, 0, 1, 0, 1, 1, 0},
+        {0, 1, 0, 1, 0, 0, 0, 1, 1, 0}
+};
+int B[N][N];
+
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam){
     HDC hdc;
     PAINTSTRUCT ps;
 
@@ -90,7 +110,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
         int yPos[10];
         int dtx = 5, radius = 16, startX = 100, divine = 1, divine2 = -1, dx, dy, xDif, yDif;
         float koef;
-        int OrientGraph = 0;// 1 - Oriented Graph | 0- Not oriented
+        int OrientGraph = 1;// 1 - Oriented Graph | 0- Not oriented
+        
+        //build matrix
+        /*srand(0504);
+        float num;
+        int element;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                num = (rand() / (float)RAND_MAX * 2) * (1.0 - 0 * 0.02 - 4 * 0.005 - 0.25);
+                if (num < 1) element = 0;
+                else element = 1;
+                A[i][j] = element;
+            }
+        }*/
+
+        simMatrix(A, B);
         HPEN BluePen = CreatePen(PS_SOLID, 2, RGB(50, 0, 255));
         HPEN BlackPen = CreatePen(PS_SOLID, 1, RGB(20, 20, 5));
 
@@ -106,57 +141,72 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
                 startX = 550;
                 xPos[vertex] = startX + divine2 * 300;
                 yPos[vertex] = 200;
-                divine2 = -divine2;
             }
             else if (vertex < 8) {
                 xPos[vertex] = startX + divine2 * 150;
                 yPos[vertex] = 350;
-                divine2 = -divine2;
             }
             else{
                 xPos[vertex] = startX + divine2 * 75;
                 yPos[vertex] = 500;
-                divine2 = -divine2;
             }
+            divine2 = -divine2;
         }
         //draw graph
         for (int start = 0; start < N;start++) {
             for (int end = 0; end < N;end++) {
-                if (A[start][end] == 1) {
-                    xDif = xPos[start] - xPos[end];
-                    yDif = yPos[start] - yPos[end];
-                    koef = sqrt(xDif * xDif + yDif * yDif) / radius;
-                    dx = xDif / koef;
-                    dy = yDif / koef;
-                    if (start == end) {
-                        MoveToEx(hdc, xPos[end], yPos[end], NULL);
-                        LineTo(hdc, xPos[end] + 40, yPos[end] + 10);
-                        LineTo(hdc, xPos[end] + 40, yPos[end] + 40);
-                        LineTo(hdc, xPos[end] + 10, yPos[end] + 40);
-                        LineTo(hdc, xPos[end], yPos[end]);
-                        if(OrientGraph)arrow(xPos[end] + 2, yPos[end] + 13, 2, 13, hdc);
-                    }
-                    else if (A[start][end] == 1 && A[end][start] == 1) {
-                        MoveToEx(hdc, xPos[start], yPos[start], NULL);
-                        LineTo(hdc, xPos[end] + xDif / 2 + (20*divine), yPos[end] + yDif/2 + (20 * divine));
-                        LineTo(hdc, xPos[end], yPos[end]);
-                        if (OrientGraph)arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
-                        divine = -divine;
-                    }
-                    else {
-                        MoveToEx(hdc, xPos[start], yPos[start], NULL);
-                        if (yDif == 0 && abs(xDif) > 300 && end <= 3) {
-                            LineTo(hdc, xPos[end] + xDif / 2, yPos[end] - 35);
-                            dx = xDif / 2 / koef;
-                            dy = (yDif-35) / koef;
+                if (OrientGraph) {
+                    if (A[start][end] == 1) {//matrix check
+                        xDif = xPos[start] - xPos[end];
+                        yDif = yPos[start] - yPos[end];
+                        koef = sqrt(xDif * xDif + yDif * yDif) / radius;
+                        dx = xDif / koef;
+                        dy = yDif / koef;
+                        if (start == end) {//LOOP check
+                            MoveToEx(hdc, xPos[end], yPos[end], NULL);
+                            LineTo(hdc, xPos[end] + 40, yPos[end] + 10);
+                            LineTo(hdc, xPos[end] + 40, yPos[end] + 40);
+                            LineTo(hdc, xPos[end] + 10, yPos[end] + 40);
+                            LineTo(hdc, xPos[end], yPos[end]);
+                            arrow(xPos[end] + 2, yPos[end] + 13, 2, 13, hdc);
                         }
-                        else if (abs(xDif) == 300 && abs(yDif) == 300 && (end == 0 || end == 3)) {
-                            LineTo(hdc, xPos[end] + xDif / 2, yPos[end] + yDif / 1);
-                            dx = xDif / 2 / koef;
-                            dy = yDif / koef;
+                        else if (A[start][end] == 1 && A[end][start] == 1) {//2-ways check
+                            MoveToEx(hdc, xPos[start], yPos[start], NULL);
+                            LineTo(hdc, xPos[end] + xDif / 2 + (20 * divine), yPos[end] + yDif / 2 + (20 * divine));
+                            LineTo(hdc, xPos[end], yPos[end]);
+                            arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
+                            divine = -divine;
                         }
-                        LineTo(hdc, xPos[end], yPos[end]);
-                        if (OrientGraph)arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
+                        else {//default connection
+                            MoveToEx(hdc, xPos[start], yPos[start], NULL);
+                            if (yDif == 0 && abs(xDif) > 300 && end <= 3) {//check on horizntal obstacle
+                                LineTo(hdc, xPos[end] + xDif / 2, yPos[end] - 35);
+                                dx = xDif / 2 / koef;
+                                dy = (yDif - 35) / koef;
+                            }
+                            else if (abs(xDif) == 300 && abs(yDif) == 300 && (end == 0 || end == 3)) {//check on diagonal obstacle
+                                LineTo(hdc, xPos[end] + xDif / 2, yPos[end] + yDif / 1);
+                                dx = xDif / 2 / koef;
+                                dy = yDif / koef;
+                            }
+                            LineTo(hdc, xPos[end], yPos[end]);
+                            arrow(xPos[end] + dx, yPos[end] + dy, dx, dy, hdc);
+                        }
+                    }
+                }
+                else {
+                    if (B[start][end] == 1) {
+                        if (start == end) {//LOOP check
+                            MoveToEx(hdc, xPos[end], yPos[end], NULL);
+                            LineTo(hdc, xPos[end] + 40, yPos[end] + 10);
+                            LineTo(hdc, xPos[end] + 40, yPos[end] + 40);
+                            LineTo(hdc, xPos[end] + 10, yPos[end] + 40);
+                            LineTo(hdc, xPos[end], yPos[end]);
+                        }
+                        else {
+                            MoveToEx(hdc, xPos[start], yPos[start], NULL);
+                            LineTo(hdc, xPos[end], yPos[end]);
+                        }
                     }
                 }
             }
@@ -178,6 +228,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT messg, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
+
 
 
 
